@@ -1,0 +1,199 @@
+{
+  "main": {
+    "id": "0ff075ae33f21b00",
+    "type": "split",
+    "children": [
+      {
+        "id": "70ef8674de63fe3d",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "a88033facce91be9",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "breach/2026-11-13-the-school-bomb-threats-came-from-accounts-already-in-stolen.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "2026-11-13-the-school-bomb-threats-came-from-accounts-already-in-stolen"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "bb57e5cc797379e1",
+    "type": "split",
+    "children": [
+      {
+        "id": "feff4ba399d77f57",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "01899403c3fcf735",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "4b2c798bfd44c221",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "b7066d0dc78b76d0",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "81775d355b0b9f18",
+    "type": "split",
+    "children": [
+      {
+        "id": "1573687aeb3e6ac3",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "354518a873280ea1",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "breach/2026-11-13-the-school-bomb-threats-came-from-accounts-already-in-stolen.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks"
+            }
+          },
+          {
+            "id": "40688999d15c6ca3",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "breach/2026-11-13-the-school-bomb-threats-came-from-accounts-already-in-stolen.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links"
+            }
+          },
+          {
+            "id": "f0cb52b833784dee",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "0c421d22e4c7cacd",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "6b8f2844d64822d8",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "breach/2026-11-13-the-school-bomb-threats-came-from-accounts-already-in-stolen.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "a88033facce91be9",
+  "lastOpenFiles": [
+    "breach/2026-11-13-united-to-block-customers-from-using-ai-agents-citing-cyber-.md",
+    "breach/2026-11-13-the-school-bomb-threats-came-from-accounts-already-in-stolen.md",
+    "breach/2026-11-13-microsoft-cloud-outage-hits-outlook-teams-copilot-and-ai-ser.md",
+    "breach/2026-11-13-feds-announce-seizure-of-1-2-billion-from-binance-theft-also.md",
+    "digests/2026-11-13.md"
+  ]
+}
