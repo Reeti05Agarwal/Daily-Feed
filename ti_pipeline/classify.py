@@ -1,13 +1,14 @@
-"""Classify an article and extract entities with Claude, using a forced tool call for reliable JSON.
+"""Classify an article and extract entities with an LLM, returning schema-checked JSON.
 
-If ANTHROPIC_API_KEY isn't set (or the API errors), falls back to a regex heuristic so the
-pipeline still produces CVE notes.
+Providers (set TI_LLM): "anthropic" (Claude, forced tool call), "ollama" (local model with
+JSON-schema structured output), or "none". If the LLM fails, falls back to a regex heuristic
+so the pipeline still produces CVE notes.
 """
+import json
 import logging
-import os
 import re
 
-import anthropic
+import requests
 
 from . import config
 
@@ -77,37 +78,61 @@ CLASSIFY_TOOL = {
 _client = None
 
 
-def _get_client() -> anthropic.Anthropic:
-    global _client
-    if _client is None:
-        _client = anthropic.Anthropic()  # reads ANTHROPIC_API_KEY
-    return _client
+def _user_message(title: str, text: str) -> str:
+    return f"<article>\n<title>{title}</title>\n<body>\n{text or '(body unavailable)'}\n</body>\n</article>"
 
 
 def classify(title: str, text: str) -> dict:
-    if not os.getenv("ANTHROPIC_API_KEY"):
-        return heuristic_classify(title, text)
+    provider = config.LLM_PROVIDER
     try:
-        msg = _get_client().messages.create(
-            model=config.MODEL,
-            max_tokens=2000,
-            system=SYSTEM_PROMPT,
-            tools=[CLASSIFY_TOOL],
-            tool_choice={"type": "tool", "name": CLASSIFY_TOOL["name"]},
-            messages=[{
-                "role": "user",
-                "content": f"<article>\n<title>{title}</title>\n<body>\n{text or '(body unavailable)'}\n</body>\n</article>",
-            }],
-        )
-    except anthropic.APIError as exc:
-        log.warning("Claude API error, using heuristic for %r: %s", title, exc)
+        if provider == "anthropic":
+            data = _classify_anthropic(title, text)
+        elif provider == "ollama":
+            data = _classify_ollama(title, text)
+        else:
+            return heuristic_classify(title, text)
+    except Exception as exc:  # any LLM failure -> heuristic, never crash the run
+        log.warning("%s failed for %r, using heuristic: %s", provider, title, exc)
         return heuristic_classify(title, text)
+    return _clean(dict(data), title, text, classified_by=provider)
 
+
+def _classify_anthropic(title: str, text: str) -> dict:
+    global _client
+    import anthropic  # only needed for this provider
+    if _client is None:
+        _client = anthropic.Anthropic()  # reads ANTHROPIC_API_KEY
+    msg = _client.messages.create(
+        model=config.MODEL,
+        max_tokens=2000,
+        system=SYSTEM_PROMPT,
+        tools=[CLASSIFY_TOOL],
+        tool_choice={"type": "tool", "name": CLASSIFY_TOOL["name"]},
+        messages=[{"role": "user", "content": _user_message(title, text)}],
+    )
     data = next((b.input for b in msg.content if b.type == "tool_use"), None)
     if data is None:
-        log.warning("No tool output for %r, using heuristic", title)
-        return heuristic_classify(title, text)
-    return _clean(dict(data), title, text, classified_by="claude")
+        raise ValueError("no tool_use block in response")
+    return data
+
+
+def _classify_ollama(title: str, text: str) -> dict:
+    resp = requests.post(
+        f"{config.OLLAMA_URL.rstrip('/')}/api/chat",
+        json={
+            "model": config.OLLAMA_MODEL,
+            "stream": False,
+            "format": CLASSIFY_TOOL["input_schema"],   # constrains output to our JSON schema
+            "options": {"temperature": 0, "num_ctx": 8192},  # default context is too small for articles
+            "messages": [
+                {"role": "system", "content": SYSTEM_PROMPT + "\nRespond only with JSON matching the schema."},
+                {"role": "user", "content": _user_message(title, text)},
+            ],
+        },
+        timeout=config.OLLAMA_TIMEOUT,
+    )
+    resp.raise_for_status()
+    return json.loads(resp.json()["message"]["content"])
 
 
 def heuristic_classify(title: str, text: str) -> dict:

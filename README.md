@@ -20,19 +20,47 @@ EPSS ≥ 0.5, or attributed APT · P3 = everything else.
 ## Run locally
 
 ```bash
+python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-export ANTHROPIC_API_KEY=sk-ant-...   # optional: without it, a regex fallback handles CVE stories only
-export NVD_API_KEY=...                # optional, free: https://nvd.nist.gov/developers/request-an-api-key
-python -m ti_pipeline.main --limit 5  # start small
+python -m ti_pipeline.main --limit 5   # start small
 ```
 
 `git` must be installed (used to index Vulhub without GitHub API rate limits).
+Optional, free: an NVD API key makes CVE lookups ~10x faster
+(https://nvd.nist.gov/developers/request-an-api-key): `export NVD_API_KEY=...`
+
+### Choosing the triage model (`TI_LLM`)
+
+| `TI_LLM` | Needs | Quality |
+|---|---|---|
+| `ollama` | Ollama running locally, no key | Good. Free, private, slower on CPU |
+| `anthropic` | `pip install -r requirements-anthropic.txt` + `ANTHROPIC_API_KEY` | Best |
+| `none` (default without a key) | nothing | CVE stories only, no ATT&CK, APTs misfiled |
+
+**Local model with Ollama:**
+
+```bash
+curl -fsSL https://ollama.com/install.sh | sh   # or see https://ollama.com/download
+ollama pull qwen2.5:7b                          # ~4.7 GB, needs ~8 GB RAM
+export TI_LLM=ollama
+python -m ti_pipeline.main --limit 5
+```
+
+Low on RAM? Use a smaller model: `ollama pull qwen2.5:3b` then `export OLLAMA_MODEL=qwen2.5:3b`
+(faster, but weaker ATT&CK mapping). Expect 20-90 s per article on CPU, a few seconds on a GPU.
+
+**Scheduling with Ollama:** GitHub Actions can't reach the Ollama on your machine, so use cron
+instead. `crontab -e`, then (adjust paths):
+
+```
+17 */6 * * * cd $HOME/Documents/Daily_Feed && TI_LLM=ollama .venv/bin/python -m ti_pipeline.main >> data/run.log 2>&1
+```
 
 ## Run on a schedule with GitHub Actions
 
 1. Push this folder to a new **private** GitHub repo (your lab notes belong in private).
 2. Settings → Secrets and variables → Actions:
-   - Secret `ANTHROPIC_API_KEY` (required for good triage)
+   - Secret `ANTHROPIC_API_KEY` (this route needs Claude; for Ollama use cron, above)
    - Secret `NVD_API_KEY` (optional, makes runs ~10x faster)
    - Variable `TI_FEED_URL` (optional, set to your fork's feed URL)
 3. Actions tab → ti-pipeline → **Run workflow** to test. After that it runs every 6 hours and
